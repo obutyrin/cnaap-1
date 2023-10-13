@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: MadeInWroclaw
+  labels:
+    app: MadeInWroclaw
+    service: MadeInWroclaw
+spec:
+  ports:
+  - name: http-MadeInWroclaw
+    port: 80
+    targetPort: 12000
+  selector:
+    app: MadeInWroclaw

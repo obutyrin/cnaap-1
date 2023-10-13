@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+	<appender name="CONSOLE"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] [%X{AWS-XRAY-TRACE-ID}] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.demo.profile.MadeInWroclaw" level="INFO"
+		additivity="false">
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<logger name="org.springframework" level="INFO"
+		additivity="false">
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</configuration>

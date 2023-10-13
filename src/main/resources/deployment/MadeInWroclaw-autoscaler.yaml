@@ -1,0 +1,14 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: MadeInWroclaw-as
+  labels:
+    name: MadeInWroclaw
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: MadeInWroclaw
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 70

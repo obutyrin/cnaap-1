@@ -1,0 +1,49 @@
+pipeline{
+	agent any
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('dockerhub-cred')
+	}
+	stages {
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t wro.io/MadeInWroclaw-image:latest .'
+			}
+		}
+		stage('Login') {
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+		stage('Push') {
+
+			steps {
+				sh 'docker push wro.io/MadeInWroclaw-image:latest'
+			}
+		}
+		stage('Deploy to K8s')
+		{
+			steps{
+				sshagent(['k8s-jenkins'])
+				{
+					script{
+						try{
+							sh 'ssh ${username}@${host} kubectl apply -f /resources/deployment/MadeInWroclaw.yaml'
+							sh 'ssh ${username}@${host} kubectl apply -f /resources/deployment/MadeInWroclaw-configmap.yaml'
+							sh 'ssh ${username}@${host} kubectl apply -f /resources/deployment/MadeInWroclaw-deployment.yaml'
+							sh 'ssh ${username}@${host} kubectl apply -f /resources/deployment/MadeInWroclaw-autoscaler.yaml'
+							}catch(error)
+							{
+
+							}
+					}
+				}
+			}
+		}
+	}
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+}

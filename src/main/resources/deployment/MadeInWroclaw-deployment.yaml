@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: MadeInWroclaw-deployment
+  labels:
+    app: MadeInWroclaw
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: MadeInWroclaw
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: MadeInWroclaw
+        version: v1
+    spec:
+      containers:
+      - name: MadeInWroclaw
+        image: wro.io/MadeInWroclaw-image
+        imagePullPolicy: IfNotPresent
+        ports:        
+        - containerPort: 12000
+        securityContext:
+          runAsUser: 1000
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /v2/actuator/health/liveness
+            port: 12000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /v2/actuator/health/readiness
+            port: 12000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
